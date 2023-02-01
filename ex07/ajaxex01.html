@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <h1>ajax get요청</h1>
+    <hr>
+    <div id="postBox">
+
+    </div>
+    <button onclick="getPost()">통신요청</button>
+    <script>
+        function getPost() {
+            $.ajax({
+                type: "get", //get요청이고
+                url: "http://localhost:8080/init/post", //주소고
+                dataType: "json" //json,text 파싱 
+            })
+                .done(function (res) {
+                    // console.log(res);
+                    if (res.code == 1) {
+                        render(res.data);
+                    } else {
+                        alert("통신실패");
+                    }
+                }) //성공하면 done을 때려준다 ()안에 함수(행위)를 넣어준다
+                .fail(function (err) { // http 상태 코드 에러일 경우
+                    console.log(err);
+                }); //실패하면 fail을 때려준다
+        }
+        function render(posts) {
+            posts.forEach((post) => {
+                let el = `
+                    <div id="post${post.id}">${post.id} ${post.title} ${post.content}</div>
+                    <button class="postData" value="post${post.id}">삭제</button>
+                `;
+                $("#postBox").prepend(el);
+            });
+        }
+
+        function addListener() {
+            $(".postData").click((event) => {
+                console.log(event.currentTarget);
+                console.log(event.currentTarget.value);
+                $(event.currentTarget).remove();
+                $(`#${event.currentTarget.value}`).remove();
+            });
+        }
+    </script>
+</body>
+
+</html>
